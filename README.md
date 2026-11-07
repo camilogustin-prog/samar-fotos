@@ -7,5 +7,6 @@ Fotos del producto que usa la tienda web de SAMAR Personalizados (sandalias pers
 - `tira-*.webp`: capas transparentes de cada color de tira para el simulador.
 - `estilos/`: miniaturas de los estilos de arte.
 - `galeria/`: fotos de pedidos reales para la galería.
+- `logo/`: logo Samar Padridin (completo, símbolo y texto, en violeta y en blanco) y favicon.
 
 La tienda carga estas imágenes desde jsDelivr: `https://cdn.jsdelivr.net/gh/camilogustin-prog/samar-fotos@main/<archivo>`.
