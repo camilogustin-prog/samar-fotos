@@ -50,9 +50,9 @@
 		const enviar = (para, asunto, html) => {
 			try {
 				const s = $app.settings();
-				if (!s.smtp.enabled || !para || String(para).indexOf("@") < 1) return false;
+				if (!para || String(para).indexOf("@") < 1) return false; // usa el correo que dé la plataforma (SMTP o el del sistema)
 				const msg = new MailerMessage({
-					from: { address: s.meta.senderAddress, name: s.meta.senderName || "Samar Padridin" },
+					from: { address: s.meta.senderAddress, name: "Samar Padridin" },
 					to: [{ address: String(para) }],
 					subject: asunto,
 					html: html,
