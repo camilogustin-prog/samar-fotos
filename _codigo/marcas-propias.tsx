@@ -70,7 +70,7 @@ const MP_CSS = [
 	'.mp-hero-v{aspect-ratio:9/16;max-height:620px;width:100%;max-width:360px;justify-self:center;overflow:hidden;background:#2a2a2a}',
 	'.mp-hero-v video{width:100%;height:100%;object-fit:cover;display:block}',
 	'.mp-hero .sm-btn-o{color:#fff;border-color:rgba(255,255,255,.6)}',
-	'.mp-hero .sm-btn-p{background:#fff;color:#120B1F;border-color:#fff}',
+	'.mp-hero .sm-btn.sm-btn-p,.mp-hero a.sm-btn-p{background:#fff !important;color:#120B1F !important;border-color:#fff !important}',
 	'.mp-facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin:22px 0 0;padding:0;list-style:none;color:rgba(255,255,255,.85);font-size:14.5px}',
 	'.mp-facts b{color:#fff}',
 	'@media(min-width:900px){.mp-hero{padding:140px 0 72px}.mp-hero .sm-wrap{grid-template-columns:1.2fr 1fr}}',
