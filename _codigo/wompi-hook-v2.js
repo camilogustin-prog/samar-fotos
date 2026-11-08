@@ -248,11 +248,20 @@ routerAdd("GET", "/api/samar/region", (e) => {
 			}
 		};
 		const pais = (h("CF-IPCountry") || h("X-Country-Code") || h("X-Geo-Country") || h("CloudFront-Viewer-Country") || h("X-Vercel-IP-Country") || h("X-Hcdn-Country") || h("X-Country")).toUpperCase().slice(0, 2);
-		let claves = [];
+		let dbg = null;
 		try {
-			if (e.request.url.query().get("debug") === "1") claves = Object.keys(e.request.header || {});
-		} catch (_) {}
-		return e.json(200, claves.length ? { pais: pais, claves: claves } : { pais: pais });
+			if (e.request.url.query().get("debug") === "1") {
+				dbg = { claves: Object.keys(e.request.header || {}), num: {} };
+				const col = e.app.findCollectionByNameOrId("pedidos");
+				["total", "precio_unitario", "anticipo", "saldo"].forEach((k) => {
+					const f = col.fields.getByName(k);
+					dbg.num[k] = f ? String(f.type()) + (f.onlyInt ? ":int" : ":dec") : "no";
+				});
+			}
+		} catch (errDbg) {
+			dbg = { err: String(errDbg) };
+		}
+		return e.json(200, dbg ? { pais: pais, dbg: dbg } : { pais: pais });
 	} catch (err) {
 		return e.json(200, { pais: "" });
 	}
