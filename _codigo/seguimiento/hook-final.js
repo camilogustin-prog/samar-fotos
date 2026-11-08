@@ -31,9 +31,9 @@ onBootstrap((e) => {
 		console.log("[samar/campos] " + err);
 	}
 	// Correo de salida: buzón de samarpadridin.com (Latinoamérica Hosting).
-	// Para activarlo, el dueño pega la contraseña del buzón en CLAVE_CORREO (este archivo no es público).
+	// Para activarlo, el dueño pega la contraseña del buzón hello@samarpadridin.com en CLAVE_CORREO (este archivo no es público).
 	try {
-		const CORREO = { host: "mail.samarpadridin.com", puerto: 465, usuario: "pedidos@samarpadridin.com", nombre: "Samar Padridin" };
+		const CORREO = { host: "mail.samarpadridin.com", puerto: 465, usuario: "hello@samarpadridin.com", nombre: "Samar Padridin" };
 		const CLAVE_CORREO = "PEGA_AQUI_LA_CLAVE";
 		if (CLAVE_CORREO && CLAVE_CORREO.indexOf("PEGA_AQUI") !== 0) {
 			const s = e.app.settings();

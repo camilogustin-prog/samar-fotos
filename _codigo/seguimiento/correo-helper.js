@@ -1,6 +1,6 @@
 		// --- correo (este bloque se repite en cada manejador porque en PocketBase cada uno corre aislado)
 		const SITIO = "https://samarpadridin.live";
-		const AVISOS = "pedidos@samarpadridin.com"; // a dónde llegan los avisos para el equipo Samar
+		const AVISOS = "hello@samarpadridin.com"; // a dónde llegan los avisos para el equipo Samar
 		const WHATSAPP_SAMAR = "573165379169";
 		const esc = (s) => String(s === null || s === undefined ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 		const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
