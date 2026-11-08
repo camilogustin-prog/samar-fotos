@@ -65,7 +65,7 @@ const MP_CSS = [
 	'.mp-hero{background:#120B1F;color:#fff;padding:120px 0 56px}',
 	'.mp-hero .sm-wrap{display:grid;gap:28px;align-items:center}',
 	'.mp-hero .sm-eyebrow{color:#C9B8F0}',
-	'.mp-hero h1{color:#fff;margin:8px 0 0}',
+	'.mp-hero h1{color:#fff;margin:10px 0 0;font-size:clamp(40px,6.4vw,74px);line-height:.98;text-transform:uppercase;letter-spacing:-0.01em}',
 	'.mp-hero .mp-lead{color:rgba(255,255,255,.82);font-size:17px;line-height:1.55;margin:14px 0 0;max-width:46ch}',
 	'.mp-hero-v{aspect-ratio:9/16;max-height:620px;width:100%;max-width:360px;justify-self:center;overflow:hidden;background:#2a2a2a}',
 	'.mp-hero-v video{width:100%;height:100%;object-fit:cover;display:block}',
