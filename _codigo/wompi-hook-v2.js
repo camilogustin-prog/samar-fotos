@@ -236,8 +236,9 @@ routerAdd("POST", "/api/samar/wompi/eventos", (e) => {
 });
 
 
-// País de la visita (para mostrar precios en dólares en Estados Unidos). Si el proxy no envía el país,
-// responde vacío y la página usa la zona horaria del navegador.
+// País de la visita (para mostrar precios en dólares en Estados Unidos).
+// Primero un encabezado de país si el proxy lo envía; si no, se consulta el país de la IP en api.country.is
+// (se guarda 24 h por IP). Si nada responde, devuelve vacío y la página usa la zona horaria del navegador.
 routerAdd("GET", "/api/samar/region", (e) => {
 	try {
 		const h = (n) => {
@@ -247,21 +248,41 @@ routerAdd("GET", "/api/samar/region", (e) => {
 				return "";
 			}
 		};
-		const pais = (h("CF-IPCountry") || h("X-Country-Code") || h("X-Geo-Country") || h("CloudFront-Viewer-Country") || h("X-Vercel-IP-Country") || h("X-Hcdn-Country") || h("X-Country")).toUpperCase().slice(0, 2);
-		let dbg = null;
-		try {
-			if (e.request.url.query().get("debug") === "1") {
-				dbg = { claves: Object.keys(e.request.header || {}), num: {} };
-				const col = e.app.findCollectionByNameOrId("pedidos");
-				["total", "precio_unitario", "anticipo", "saldo"].forEach((k) => {
-					const f = col.fields.getByName(k);
-					dbg.num[k] = f ? String(f.type()) + (f.onlyInt ? ":int" : ":dec") : "no";
-				});
+		let pais = (h("CF-IPCountry") || h("X-Country-Code") || h("X-Geo-Country") || h("CloudFront-Viewer-Country") || h("X-Vercel-IP-Country")).toUpperCase().slice(0, 2);
+		let fuente = pais ? "encabezado" : "";
+		if (!pais) {
+			const ip = String(e.realIP() || "");
+			const privada = !ip || /^(10\.|127\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|169\.254\.|::1$|fc|fd|fe80)/i.test(ip);
+			if (!privada) {
+				const llave = "samar_pais_" + ip;
+				const guardado = e.app.store().get(llave);
+				if (guardado && Date.now() - guardado.t < 24 * 60 * 60 * 1000) {
+					pais = guardado.v;
+					fuente = "ip";
+				} else {
+					try {
+						const res = $http.send({ url: "https://api.country.is/" + encodeURIComponent(ip), method: "GET", timeout: 5 });
+						let j = null;
+						try {
+							j = res.json;
+						} catch (_) {}
+						if (!j) {
+							try {
+								j = JSON.parse(toString(res.body));
+							} catch (_) {}
+						}
+						pais = String((j && j.country) || "").toUpperCase().slice(0, 2);
+						e.app.store().set(llave, { v: pais, t: Date.now() });
+						fuente = "ip";
+					} catch (errIp) {
+						console.log("[samar/region] " + errIp);
+					}
+				}
+			} else {
+				fuente = "ip-privada";
 			}
-		} catch (errDbg) {
-			dbg = { err: String(errDbg) };
 		}
-		return e.json(200, dbg ? { pais: pais, dbg: dbg } : { pais: pais });
+		return e.json(200, { pais: pais, fuente: fuente });
 	} catch (err) {
 		return e.json(200, { pais: "" });
 	}
