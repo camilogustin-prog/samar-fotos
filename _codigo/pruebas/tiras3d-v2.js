@@ -317,6 +317,8 @@ export function applyLook(m, look) {
 	m.emissiveIntensity = look.glitter;
 	m.normalScale.set(look.flake, look.flake);
 	m.userData.edge.value = look.edge;
+	m.clearcoat = look.coat ?? 1;
+	m.clearcoatRoughness = look.coatRough ?? 0.06;
 	m.needsUpdate = true;
 }
 
@@ -436,12 +438,14 @@ export async function montar(host, o = {}) {
 	if (o.slots !== false) {
 		HOLES.forEach((h) =>
 			[h.med, h.lat].forEach((q) => {
-				const g = tctx.createRadialGradient(q[0], q[1] + 4, 0, q[0], q[1] + 4, 16);
-				g.addColorStop(0, 'rgba(40,28,18,0.5)');
-				g.addColorStop(1, 'rgba(40,28,18,0)');
+				const r0 = o.holeR ?? 11;
+				const g = tctx.createRadialGradient(q[0], q[1] + 3, 0, q[0], q[1] + 3, r0 * 1.5);
+				g.addColorStop(0, 'rgba(34,22,12,' + (o.holeA ?? 0.85) + ')');
+				g.addColorStop(0.55, 'rgba(34,22,12,' + (o.holeA ?? 0.85) * 0.7 + ')');
+				g.addColorStop(1, 'rgba(34,22,12,0)');
 				tctx.fillStyle = g;
 				tctx.beginPath();
-				tctx.ellipse(q[0], q[1] + 4, 11, 16, 0, 0, Math.PI * 2);
+				tctx.ellipse(q[0], q[1] + 3, r0, r0 * 1.35, 0, 0, Math.PI * 2);
 				tctx.fill();
 			}),
 		);
