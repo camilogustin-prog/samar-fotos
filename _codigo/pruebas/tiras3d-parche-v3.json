@@ -1,0 +1,85 @@
+[
+ {
+  "start": "// Aspecto de cada tira del catálogo, medido en las fotos del producto",
+  "end": "};",
+  "text": "// Aspecto de cada tira del catálogo, medido en las fotos del producto: PVC brillante;\n// la dorada, la rosada y la plateada son translúcidas (se ve la suela y los bordes se oscurecen)\ntype StrapLook = { color: string; op: number; rough: number; metal: number; glitter: number; flake: number; edge: number; coat: number; coatRough: number };\nconst STRAP_LOOK: Record<string, StrapLook> = {\n\tbronce: { color: '#B08E5C', op: 0.62, rough: 0.08, metal: 0.05, glitter: 0.3, flake: 0.3, edge: 0.9, coat: 1, coatRough: 0.03 },\n\trosa: { color: '#C98E9E', op: 0.62, rough: 0.08, metal: 0.05, glitter: 0.28, flake: 0.3, edge: 0.9, coat: 1, coatRough: 0.03 },\n\t'negra-escarcha': { color: '#141418', op: 1, rough: 0.07, metal: 0.05, glitter: 0.5, flake: 0.45, edge: 0, coat: 1, coatRough: 0.03 },\n\tnegra: { color: '#0E0E10', op: 1, rough: 0.07, metal: 0, glitter: 0, flake: 0, edge: 0, coat: 1, coatRough: 0.03 },\n\tplata: { color: '#A3A6AB', op: 0.45, rough: 0.08, metal: 0, glitter: 0, flake: 0.05, edge: 0.95, coat: 1, coatRough: 0.03 },\n\tblanco: { color: '#DCDCD8', op: 1, rough: 0.1, metal: 0, glitter: 0, flake: 0, edge: 0, coat: 1, coatRough: 0.03 },\n};"
+ },
+ {
+  "start": "// Recorrido de la tira como en las fotos de producto: cae en una V suave",
+  "end": "const SOLE_TOP = 40;",
+  "endExclusive": true,
+  "text": ""
+ },
+ {
+  "start": "const smoothK = (a: number, b: number, x: number) => {",
+  "end": "type Viewer =",
+  "endExclusive": true,
+  "text": "const smoothK = (a: number, b: number, x: number) => {\n\tconst k = Math.min(1, Math.max(0, (x - a) / (b - a)));\n\treturn k * k * (3 - 2 * k);\n};\n\n// Huecos donde la tira entra en la suela, ajustados a las fotos de producto: un poco más adentro\n// y más arriba que en el molde, porque la tira llega curvada hacia el centro\nconst STRAP_HOLES = HOLES.map((h) => {\n\tconst dir = Math.sign(h.med[0] - h.lat[0]);\n\treturn { toe: h.toe, med: [h.med[0] - dir * 10, h.med[1] - 6], lat: [h.lat[0] + dir * 10, h.lat[1] - 6] };\n});\n\n// Recorrido de la tira medido en las fotos de producto (vista desde arriba, tira de pie):\n// sale del nudo, que queda detrás del hueco del dedo, en diagonal hasta el borde de la suela,\n// baja pegada al borde y al final se recoge hacia adentro para entrar en el hueco.\n// Las fracciones son la distancia al borde (interno o externo) sobre el ancho de la suela.\nfunction strapLegsKite(poly: number[][], medialRight: boolean, holes: { toe: number[]; med: number[]; lat: number[] }) {\n\tlet y0 = Infinity;\n\tlet y1 = -Infinity;\n\tfor (const q of poly) {\n\t\tif (q[1] < y0) y0 = q[1];\n\t\tif (q[1] > y1) y1 = q[1];\n\t}\n\tconst H = y1 - y0;\n\tconst at = (f: number, fromMedial: number) => {\n\t\tconst y = y0 + f * H;\n\t\tconst [l, r] = edgesAt(poly, y);\n\t\tconst w = r - l;\n\t\treturn [medialRight ? r - fromMedial * w : l + fromMedial * w, y];\n\t};\n\tconst post = holes.toe.slice();\n\tconst apexF = (post[1] - y0) / H + 0.05;\n\tconst apex = at(apexF, 0.43);\n\tconst FS = [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7];\n\tconst MED = [0.27, 0.17, 0.08, 0.035, 0.025, 0.03, 0.045, 0.085, 0.15];\n\tconst LAT = [0.35, 0.23, 0.12, 0.045, 0.03, 0.03, 0.05, 0.09, 0.155];\n\tconst leg = (IN: number[], end: number[]) => {\n\t\tconst out = [apex.slice()];\n\t\tconst endF = (end[1] - y0) / H;\n\t\tFS.forEach((f, k) => {\n\t\t\tif (f > apexF + 0.02 && f < endF - 0.012) out.push(at(f, IN[k]));\n\t\t});\n\t\tout.push(end.slice());\n\t\treturn out;\n\t};\n\treturn { post, apex, legs: [leg(MED, holes.med), leg(LAT.map((v) => 1 - v), holes.lat)] };\n}\n\n// Tira como banda plana de PVC brillante (como la real): sección de rectángulo redondeado de 1,2 cm,\n// cara arriba junto al nudo, inclinada hacia afuera a los lados del pie y otra vez de cara al entrar\n// en el hueco. 1 px de la foto ≈ 0,29 mm.\nfunction strapGeo(T: Any, p: number[][]) {\n\tconst out = Math.sign(p[p.length - 1][0] - p[0][0]) || 1;\n\tconst len = [0];\n\tfor (let i = 1; i < p.length; i++) len.push(len[i - 1] + Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]));\n\tconst tot = len[len.length - 1];\n\tconst P = p.map((q, i) => {\n\t\tconst t = len[i] / tot;\n\t\treturn new T.Vector3(q[0], SOLE_TOP + (1 - Math.pow(t, 5)) * (62 + 44 * Math.sin(Math.PI * t * 0.85)), q[1]);\n\t});\n\tconst e = p[p.length - 1];\n\tP.push(new T.Vector3(e[0], SOLE_TOP - 12, e[1] + 4));\n\tconst curve = new T.CatmullRomCurve3(P, false, 'centripetal');\n\tconst L = curve.getLength();\n\tconst N = 150;\n\tconst M = 22;\n\tconst ex = 2 / 3.4;\n\tconst up = new T.Vector3(0, 1, 0);\n\tconst pos: number[] = [];\n\tconst uv: number[] = [];\n\tconst idx: number[] = [];\n\tlet firstC: Any = null;\n\tfor (let i = 0; i <= N; i++) {\n\t\tconst u = i / N;\n\t\tconst C = curve.getPointAt(u);\n\t\tconst Tn = curve.getTangentAt(u).normalize();\n\t\tconst W = new T.Vector3().crossVectors(Tn, up);\n\t\tif (W.lengthSq() < 1e-6) W.set(out, 0, 0);\n\t\tW.normalize();\n\t\tif (W.x * out < 0) W.negate();\n\t\tconst Nn = new T.Vector3().crossVectors(W, Tn).normalize();\n\t\tif (Nn.y < 0) Nn.negate();\n\t\tconst a = 0.12 + 0.5 * smoothK(0.12, 0.42, u) - 0.4 * smoothK(0.7, 0.98, u);\n\t\tconst W2 = W.clone().multiplyScalar(Math.cos(a)).addScaledVector(Nn, -Math.sin(a)).normalize();\n\t\tconst D = new T.Vector3().crossVectors(W2, Tn).normalize();\n\t\tif (D.dot(Nn) < 0) D.negate();\n\t\tconst hw = 19 + 2 * smoothK(0, 0.18, u) - 2 * smoothK(0.9, 1, u);\n\t\tconst ht = 5.2 - 0.4 * smoothK(0.08, 0.45, u);\n\t\tif (i === 0) firstC = C.clone();\n\t\tfor (let j = 0; j < M; j++) {\n\t\t\tconst th = -Math.PI / 2 + (j / M) * Math.PI * 2;\n\t\t\tconst c = Math.cos(th);\n\t\t\tconst s = Math.sin(th);\n\t\t\tconst q = C.clone()\n\t\t\t\t.addScaledVector(W2, Math.sign(c) * Math.pow(Math.abs(c), ex) * hw)\n\t\t\t\t.addScaledVector(D, Math.sign(s) * Math.pow(Math.abs(s), ex) * ht);\n\t\t\tpos.push(q.x, q.y, q.z);\n\t\t\tuv.push((u * L) / 110, ((j / M) * (4 * hw + 4 * ht)) / 110);\n\t\t}\n\t}\n\tfor (let i = 0; i < N; i++) {\n\t\tfor (let j = 0; j < M; j++) {\n\t\t\tconst a = i * M + j;\n\t\t\tconst b = i * M + ((j + 1) % M);\n\t\t\tconst c = (i + 1) * M + j;\n\t\t\tconst d = (i + 1) * M + ((j + 1) % M);\n\t\t\tidx.push(a, c, b, b, c, d);\n\t\t}\n\t}\n\tconst geo = new T.BufferGeometry();\n\tgeo.setAttribute('position', new T.Float32BufferAttribute(pos, 3));\n\tgeo.setAttribute('uv', new T.Float32BufferAttribute(uv, 2));\n\tgeo.setIndex(idx);\n\tgeo.computeVertexNormals();\n\t// Caras hacia afuera: la normal del borde exterior debe apuntar lejos del centro de la tira\n\tconst n = geo.attributes.normal;\n\tconst k = M / 4;\n\tconst nv = new T.Vector3(n.getX(k), n.getY(k), n.getZ(k));\n\tconst pv = new T.Vector3(pos[k * 3], pos[k * 3 + 1], pos[k * 3 + 2]).sub(firstC);\n\tif (nv.dot(pv) < 0) {\n\t\tfor (let t = 0; t < idx.length; t += 3) {\n\t\t\tconst s = idx[t + 1];\n\t\t\tidx[t + 1] = idx[t + 2];\n\t\t\tidx[t + 2] = s;\n\t\t}\n\t\tgeo.setIndex(idx);\n\t\tgeo.computeVertexNormals();\n\t}\n\treturn geo;\n}\n\n// Poste del dedo como en la foto: sale del nudo hacia adelante y baja al hueco de la suela\nfunction postStub(T: Any, post: number[], apex: number[]) {\n\tconst top = new T.Vector3(apex[0], SOLE_TOP + 62, apex[1]);\n\tconst mid = new T.Vector3(post[0] + (apex[0] - post[0]) * 0.35, SOLE_TOP + 34, post[1] + (apex[1] - post[1]) * 0.3);\n\tconst bot = new T.Vector3(post[0], SOLE_TOP - 10, post[1]);\n\tconst tube = new T.TubeGeometry(new T.CatmullRomCurve3([top, mid, bot], false, 'centripetal'), 24, 8, 20, false);\n\tconst head = new T.SphereGeometry(13, 40, 24);\n\thead.scale(1.3, 0.42, 1);\n\thead.translate(top.x, top.y - 2, top.z + 2);\n\treturn [tube, head];\n}\n\n// Escarcha: escamas que reflejan la luz en distintas direcciones (brillan al girar) y puntos finos\nfunction strapTextures(T: Any) {\n\tconst S = 256;\n\tconst fc = document.createElement('canvas');\n\tfc.width = fc.height = S;\n\tconst fx = fc.getContext('2d') as CanvasRenderingContext2D;\n\tfx.fillStyle = 'rgb(128,128,255)';\n\tfx.fillRect(0, 0, S, S);\n\tfor (let i = 0; i < 2600; i++) {\n\t\tconst nx = (Math.random() - 0.5) * 1.3;\n\t\tconst ny = (Math.random() - 0.5) * 1.3;\n\t\tconst l = Math.hypot(nx, ny, 1);\n\t\tfx.fillStyle = 'rgb(' + Math.round((nx / l / 2 + 0.5) * 255) + ',' + Math.round((ny / l / 2 + 0.5) * 255) + ',' + Math.round((1 / l / 2 + 0.5) * 255) + ')';\n\t\tconst z = Math.random() < 0.3 ? 2 : 1;\n\t\tfx.fillRect(Math.floor(Math.random() * S), Math.floor(Math.random() * S), z, z);\n\t}\n\tconst flake = new T.CanvasTexture(fc);\n\tflake.wrapS = flake.wrapT = T.RepeatWrapping;\n\tflake.colorSpace = T.NoColorSpace;\n\tconst gc = document.createElement('canvas');\n\tgc.width = gc.height = S;\n\tconst gx = gc.getContext('2d') as CanvasRenderingContext2D;\n\tgx.fillStyle = '#000';\n\tgx.fillRect(0, 0, S, S);\n\tfor (let i = 0; i < 520; i++) {\n\t\tconst v = 150 + Math.floor(Math.random() * 105);\n\t\tgx.fillStyle = 'rgb(' + v + ',' + v + ',' + v + ')';\n\t\tgx.fillRect(Math.floor(Math.random() * S), Math.floor(Math.random() * S), 1, 1);\n\t}\n\tconst glit = new T.CanvasTexture(gc);\n\tglit.wrapS = glit.wrapT = T.RepeatWrapping;\n\treturn { flake, glit };\n}\n\n// PVC brillante; en las tiras translúcidas los bordes se ven más opacos y oscuros, como en la foto\nfunction strapMaterial(T: Any, tx: { flake: Any; glit: Any }) {\n\tconst m = new T.MeshPhysicalMaterial({\n\t\tcolor: 0x7a5c3a,\n\t\troughness: 0.1,\n\t\tmetalness: 0.05,\n\t\tclearcoat: 1,\n\t\tclearcoatRoughness: 0.06,\n\t\tnormalMap: tx.flake,\n\t\tnormalScale: new T.Vector2(0.3, 0.3),\n\t\temissive: 0xffffff,\n\t\temissiveMap: tx.glit,\n\t\temissiveIntensity: 0,\n\t});\n\tm.userData.edge = { value: 0 };\n\tm.onBeforeCompile = (sh: Any) => {\n\t\tsh.uniforms.uEdge = m.userData.edge;\n\t\tsh.fragmentShader =\n\t\t\t'uniform float uEdge;\\n' +\n\t\t\tsh.fragmentShader.replace(\n\t\t\t\t'#include <opaque_fragment>',\n\t\t\t\t'float sFr = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition)));\\n\\tfloat sEd = clamp(uEdge * sFr * sFr * 1.8, 0.0, 1.0);\\n\\tdiffuseColor.a = mix(diffuseColor.a, 1.0, sEd);\\n\\toutgoingLight *= mix(1.0, 0.6, sEd);\\n\\t#include <opaque_fragment>',\n\t\t\t);\n\t};\n\treturn m;\n}\n\nfunction applyStrapLook(m: Any, look: StrapLook) {\n\tm.color.set(look.color);\n\tm.metalness = look.metal;\n\tm.roughness = look.rough;\n\tm.transparent = look.op < 1;\n\tm.opacity = look.op;\n\tm.emissiveIntensity = look.glitter;\n\tm.normalScale.set(look.flake, look.flake);\n\tm.userData.edge.value = look.edge;\n\tm.clearcoat = look.coat;\n\tm.clearcoatRoughness = look.coatRough;\n\tm.needsUpdate = true;\n}\n\n// Luz de estudio solo para la tira: cajas de luz delgadas que dan los reflejos largos de las fotos\nfunction strapEnv(T: Any, renderer: Any) {\n\tconst pm = new T.PMREMGenerator(renderer);\n\tconst sc = new T.Scene();\n\tsc.add(new T.Mesh(new T.BoxGeometry(14, 14, 14), new T.MeshBasicMaterial({ color: new T.Color().setScalar(0.32), side: T.BackSide })));\n\tconst box = (w: number, h: number, x: number, y: number, z: number, k: number) => {\n\t\tconst m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ color: new T.Color().setScalar(k), side: T.DoubleSide }));\n\t\tm.position.set(x, y, z);\n\t\tm.lookAt(0, 0, 0);\n\t\tsc.add(m);\n\t};\n\tbox(6, 2.2, 0, 6, 0.5, 5);\n\tbox(0.7, 7, -4, 4, 2.5, 9);\n\tbox(0.6, 7, 4.5, 3.5, 1, 6.3);\n\tbox(6, 0.6, 0, 3, 5, 5.4);\n\tbox(5, 0.6, 0, 3, -5, 4.5);\n\tconst t = pm.fromScene(sc, 0.02).texture;\n\tsc.traverse((o: Any) => {\n\t\tif (o.geometry) o.geometry.dispose();\n\t\tif (o.material) o.material.dispose();\n\t});\n\tpm.dispose();\n\treturn t;\n}\n\n// Grano fino de la goma EVA de la suela (relieve muy leve)\nfunction grainTexture(T: Any) {\n\tconst S = 256;\n\tconst nc = document.createElement('canvas');\n\tnc.width = nc.height = S;\n\tconst nx = nc.getContext('2d') as CanvasRenderingContext2D;\n\tconst id = nx.createImageData(S, S);\n\tfor (let i = 0; i < id.data.length; i += 4) {\n\t\tconst v = 128 + (Math.random() - 0.5) * 230;\n\t\tid.data[i] = id.data[i + 1] = id.data[i + 2] = v;\n\t\tid.data[i + 3] = 255;\n\t}\n\tnx.putImageData(id, 0, 0);\n\tconst t = new T.CanvasTexture(nc);\n\tt.wrapS = t.wrapT = T.RepeatWrapping;\n\tt.colorSpace = T.NoColorSpace;\n\tt.repeat.set(1 / 50, 1 / 50);\n\treturn t;\n}\n"
+ },
+ {
+  "start": "key.position.set(-1.4, 6, 2.2);",
+  "end": "key.position.set(-1.4, 6, 2.2);",
+  "text": "key.position.set(-1.0, 6, 1.6);"
+ },
+ {
+  "start": "capMat.bumpScale = 3;",
+  "end": "capMat.bumpScale = 3;",
+  "text": "capMat.bumpScale = 2;"
+ },
+ {
+  "start": "const strapPaths: { post: number[]; legs: number[][][] }[] = [];",
+  "end": "const strapPaths: { post: number[]; legs: number[][][] }[] = [];",
+  "text": "const strapPaths: { post: number[]; apex: number[]; legs: number[][][] }[] = [];"
+ },
+ {
+  "start": "const sl = strapLegsV(HOLES[i]);",
+  "end": "const sl = strapLegsV(HOLES[i]);",
+  "text": "const sl = strapLegsKite(poly, i === 0, STRAP_HOLES[i]);"
+ },
+ {
+  "start": "const legs = sl.legs.map((leg) => insideSole(leg, poly, 22));",
+  "end": "const legs = sl.legs.map((leg) => insideSole(leg, poly, 22));",
+  "text": "const legs = sl.legs.map((leg) => insideSole(leg, poly, 2));"
+ },
+ {
+  "start": "strapPaths.push({ post: sl.post, legs });",
+  "end": "strapPaths.push({ post: sl.post, legs });",
+  "text": "strapPaths.push({ post: sl.post, apex: sl.apex, legs });"
+ },
+ {
+  "start": "[...postGeos(T, sl.post), ...legs.map((leg) => strapGeo(T, leg))].forEach((pg: Any) => {",
+  "end": "[...postGeos(T, sl.post), ...legs.map((leg) => strapGeo(T, leg))].forEach((pg: Any) => {",
+  "text": "[...postStub(T, sl.post, sl.apex), ...legs.map((leg) => strapGeo(T, leg))].forEach((pg: Any) => {"
+ },
+ {
+  "start": "blurStroke([S.post, [S.post[0] + 0.1, S.post[1] + 0.1]], 34, 9, 0.45);",
+  "end": "blurStroke([S.post, [S.post[0] + 0.1, S.post[1] + 0.1]], 34, 9, 0.45);",
+  "text": "blurStroke([S.post, S.apex], 26, 9, 0.4);"
+ },
+ {
+  "start": "HOLES.forEach((h) =>",
+  "end": "tctx.setTransform(1, 0, 0, 1, 0, 0);",
+  "text": "STRAP_HOLES.forEach((h) =>\n\t[h.med, h.lat].forEach((q) => {\n\t\tconst sg = tctx.createRadialGradient(q[0], q[1] + 3, 0, q[0], q[1] + 3, 13.5);\n\t\tsg.addColorStop(0, 'rgba(34,22,12,0.6)');\n\t\tsg.addColorStop(0.55, 'rgba(34,22,12,0.42)');\n\t\tsg.addColorStop(1, 'rgba(34,22,12,0)');\n\t\ttctx.fillStyle = sg;\n\t\ttctx.beginPath();\n\t\ttctx.ellipse(q[0], q[1] + 3, 9, 12.2, 0, 0, Math.PI * 2);\n\t\ttctx.fill();\n\t}),\n);\ntctx.setTransform(1, 0, 0, 1, 0, 0);"
+ },
+ {
+  "start": "sx.shadowBlur = 30;",
+  "end": "sx.shadowBlur = 30;",
+  "text": "sx.shadowBlur = 26;"
+ },
+ {
+  "start": "sx.shadowOffsetX = 1513;",
+  "end": "sx.shadowOffsetX = 1513;",
+  "text": "sx.shadowOffsetX = 1508;"
+ },
+ {
+  "start": "sx.shadowOffsetY = -5;",
+  "end": "sx.shadowOffsetY = -5;",
+  "text": "sx.shadowOffsetY = -1;"
+ },
+ {
+  "start": "const shadow = new T.Mesh(new T.PlaneGeometry(1140, 1190)",
+  "mode": "sub",
+  "frm": "opacity: 0.95",
+  "to": "opacity: 0.8"
+ }
+]
