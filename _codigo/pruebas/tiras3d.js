@@ -15,12 +15,12 @@ const SOLE_TOP = 40;
 
 // Aspecto de cada tira (PVC brillante; las "escarcha" llevan brillo fino y las claras dejan ver la suela)
 export const STRAP_LOOK = {
-	bronce: { color: '#BF9A5E', op: 0.8, rough: 0.14, metal: 0.08, glitter: 0.28, flake: 0.35, edge: 0.8 },
-	rosa: { color: '#E3A0B5', op: 0.82, rough: 0.14, metal: 0.05, glitter: 0.25, flake: 0.35, edge: 0.75 },
-	'negra-escarcha': { color: '#2A2A30', op: 1, rough: 0.18, metal: 0.1, glitter: 0.5, flake: 0.45, edge: 0 },
-	negra: { color: '#141416', op: 1, rough: 0.24, metal: 0, glitter: 0, flake: 0, edge: 0 },
-	plata: { color: '#B6BBC3', op: 1, rough: 0.2, metal: 0.55, glitter: 0, flake: 0.12, edge: 0 },
-	blanco: { color: '#F2F1EC', op: 1, rough: 0.3, metal: 0, glitter: 0, flake: 0, edge: 0 },
+	bronce: { color: '#86694A', op: 0.66, rough: 0.1, metal: 0.05, glitter: 0.2, flake: 0.3, edge: 0.9 },
+	rosa: { color: '#BC8494', op: 0.7, rough: 0.1, metal: 0.05, glitter: 0.18, flake: 0.3, edge: 0.85 },
+	'negra-escarcha': { color: '#26262B', op: 1, rough: 0.14, metal: 0.1, glitter: 0.55, flake: 0.45, edge: 0 },
+	negra: { color: '#1C1D1F', op: 1, rough: 0.18, metal: 0, glitter: 0, flake: 0, edge: 0 },
+	plata: { color: '#9EA3AB', op: 1, rough: 0.16, metal: 0.55, glitter: 0, flake: 0.12, edge: 0 },
+	blanco: { color: '#E8E8E4', op: 1, rough: 0.24, metal: 0, glitter: 0, flake: 0, edge: 0 },
 };
 
 function edgesAt(poly, y) {
@@ -241,7 +241,7 @@ export function strapMaterial(tx) {
 		emissiveMap: tx.glit,
 		emissiveIntensity: 0,
 	});
-	// Bordes más opacos que el centro, como el PVC translúcido visto de lado
+	// PVC translúcido: los bordes (donde la luz atraviesa más material) se ven más opacos y oscuros
 	m.userData.edge = { value: 0 };
 	m.onBeforeCompile = (sh) => {
 		sh.uniforms.uEdge = m.userData.edge;
@@ -249,10 +249,32 @@ export function strapMaterial(tx) {
 			'uniform float uEdge;\n' +
 			sh.fragmentShader.replace(
 				'#include <opaque_fragment>',
-				'float sFr = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition)));\n\tdiffuseColor.a = mix(diffuseColor.a, 1.0, clamp(uEdge * sFr * sFr * 1.6, 0.0, 1.0));\n\t#include <opaque_fragment>',
+				'float sFr = 1.0 - abs(dot(normalize(normal), normalize(vViewPosition)));\n\tfloat sEd = clamp(uEdge * sFr * sFr * 1.8, 0.0, 1.0);\n\tdiffuseColor.a = mix(diffuseColor.a, 1.0, sEd);\n\toutgoingLight *= mix(1.0, 0.6, sEd);\n\t#include <opaque_fragment>',
 			);
 	};
 	return m;
+}
+
+// Luz de estudio solo para la tira: fondo oscuro con cajas de luz delgadas,
+// así el PVC brillante muestra los reflejos largos de las fotos del producto
+export function strapEnv(renderer, o = {}) {
+	const pm = new T.PMREMGenerator(renderer);
+	const sc = new T.Scene();
+	sc.add(new T.Mesh(new T.BoxGeometry(14, 14, 14), new T.MeshBasicMaterial({ color: new T.Color().setScalar(o.bg ?? 0.32), side: T.BackSide })));
+	const box = (w, h, x, y, z, k) => {
+		const m = new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ color: new T.Color().setScalar(k), side: T.DoubleSide }));
+		m.position.set(x, y, z);
+		m.lookAt(0, 0, 0);
+		sc.add(m);
+	};
+	box(6, 2.2, 0, 6, 0.5, o.top ?? 5);
+	box(0.7, 7, -4, 4, 2.5, o.side ?? 9);
+	box(0.6, 7, 4.5, 3.5, 1, (o.side ?? 9) * 0.7);
+	box(6, 0.6, 0, 3, 5, (o.side ?? 9) * 0.6);
+	box(5, 0.6, 0, 3, -5, (o.side ?? 9) * 0.5);
+	const t = pm.fromScene(sc, 0.02).texture;
+	pm.dispose();
+	return t;
 }
 
 export function applyLook(m, look) {
@@ -355,6 +377,10 @@ export async function montar(host, o = {}) {
 	const sideMat = new T.MeshStandardMaterial({ color: 0xe2dac8, roughness: 0.92, envMapIntensity: 0.45 });
 	const tx = flakeTextures();
 	const strapMat = strapMaterial(tx);
+	if (o.strapEnv !== false) {
+		strapMat.envMap = strapEnv(renderer, o.env || {});
+		strapMat.envMapIntensity = o.envI ?? 1;
+	}
 	applyLook(strapMat, STRAP_LOOK[o.strap || 'bronce']);
 	const groups = [];
 	[SOLE_L, SOLE_R].forEach((s, i) => {
