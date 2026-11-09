@@ -182,7 +182,7 @@ export function strapGeo(p, opt = {}) {
 		if (W.x * out < 0) W.negate();
 		const Nn = new T.Vector3().crossVectors(W, Tn).normalize();
 		if (Nn.y < 0) Nn.negate();
-		const a = opt.stand ? 0.12 + 1.3 * smooth(0.12, 0.42, u) - (opt.endTilt ?? 0.55) * smooth(0.8, 0.98, u) : (opt.a0 ?? 0.1) + (opt.a1 ?? 1.25) * smooth(opt.ta ?? 0.1, opt.tb ?? 0.94, u);
+		const a = opt.stand ? (opt.a0 ?? 0.12) + (opt.aMid ?? 1.3) * smooth(0.12, 0.42, u) - (opt.endTilt ?? 0.55) * smooth(opt.endA ?? 0.8, 0.98, u) : (opt.a0 ?? 0.1) + (opt.a1 ?? 1.25) * smooth(opt.ta ?? 0.1, opt.tb ?? 0.94, u);
 		const W2 = W.clone().multiplyScalar(Math.cos(a)).addScaledVector(Nn, -Math.sin(a)).normalize();
 		const D = new T.Vector3().crossVectors(W2, Tn).normalize();
 		if (D.dot(Nn) < 0) D.negate();
@@ -266,7 +266,7 @@ export function postStub(post, apex, o = {}) {
 	const curve = new T.CatmullRomCurve3([top, mid, bot], false, 'centripetal');
 	const tube = new T.TubeGeometry(curve, 24, o.r ?? 8.5, 20, false);
 	const head = new T.SphereGeometry(o.headR ?? 17, 40, 24);
-	head.scale(1.25, 0.55, 1.05);
+	head.scale(o.hx ?? 1.25, o.hy ?? 0.55, o.hz ?? 1.05);
 	head.translate(top.x, top.y - 2, top.z + 2);
 	return [tube, head];
 }
