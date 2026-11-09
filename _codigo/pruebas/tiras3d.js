@@ -15,8 +15,8 @@ const SOLE_TOP = 40;
 
 // Aspecto de cada tira (PVC brillante; las "escarcha" llevan brillo fino y las claras dejan ver la suela)
 export const STRAP_LOOK = {
-	bronce: { color: '#86694A', op: 0.66, rough: 0.1, metal: 0.05, glitter: 0.2, flake: 0.3, edge: 0.9 },
-	rosa: { color: '#BC8494', op: 0.7, rough: 0.1, metal: 0.05, glitter: 0.18, flake: 0.3, edge: 0.85 },
+	bronce: { color: '#7A5C3A', op: 0.72, rough: 0.1, metal: 0.05, glitter: 0.2, flake: 0.3, edge: 0.9 },
+	rosa: { color: '#B97F90', op: 0.74, rough: 0.1, metal: 0.05, glitter: 0.18, flake: 0.3, edge: 0.85 },
 	'negra-escarcha': { color: '#26262B', op: 1, rough: 0.14, metal: 0.1, glitter: 0.55, flake: 0.45, edge: 0 },
 	negra: { color: '#1C1D1F', op: 1, rough: 0.18, metal: 0, glitter: 0, flake: 0, edge: 0 },
 	plata: { color: '#9EA3AB', op: 1, rough: 0.16, metal: 0.55, glitter: 0, flake: 0.12, edge: 0 },
@@ -174,11 +174,11 @@ export function strapGeo(p, opt = {}) {
 export function postGeos(post) {
 	const lathe = [
 		[0, -6],
-		[10.5, -6],
-		[10, 10],
-		[9, 26],
-		[10.5, 36],
-		[14, 44],
+		[12.5, -6],
+		[12, 8],
+		[11, 24],
+		[12.5, 34],
+		[15, 42],
 		[0, 44],
 	].map((q) => new T.Vector2(q[0], q[1]));
 	const pg = new T.LatheGeometry(lathe, 32);
