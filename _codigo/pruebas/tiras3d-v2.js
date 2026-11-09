@@ -160,7 +160,7 @@ export function strapGeo(p, opt = {}) {
 		return new T.Vector3(q[0], SOLE_TOP + (1 - Math.pow(t, opt.fall ?? 5)) * ((opt.base ?? 50) + rise * Math.sin(Math.PI * t * (opt.peak ?? 0.85))), q[1]);
 	});
 	const e = p[p.length - 1];
-	P.push(new T.Vector3(e[0], SOLE_TOP - 16, e[1] + 4));
+	P.push(new T.Vector3(e[0], SOLE_TOP - (opt.endDrop ?? 16), e[1] + 4));
 	const curve = new T.CatmullRomCurve3(P, false, 'centripetal');
 	const L = curve.getLength();
 	const N = 150;
@@ -554,6 +554,19 @@ export async function montar(host, o = {}) {
 		sole.receiveShadow = true;
 		g.add(sole);
 		const parts = [...(S.apex ? postStub(S.post, S.apex, o.post || {}) : postGeos(S.post, o.post || {})), ...S.legs.map((leg) => strapGeo(leg, o.geo || {}))];
+		if (o.tips) {
+			// Punta redondeada donde la tira entra en el hueco (como en la foto)
+			S.legs.forEach((leg) => {
+				const e = leg[leg.length - 1];
+				const p2 = leg[leg.length - 2];
+				const ang = Math.atan2(e[0] - p2[0], e[1] - p2[1]);
+				const tg = new T.SphereGeometry(1, 32, 20);
+				tg.scale(o.tips.w ?? 15, o.tips.h ?? 7, o.tips.l ?? 13);
+				tg.rotateY(ang);
+				tg.translate(e[0], SOLE_TOP + (o.tips.y ?? 3), e[1]);
+				parts.push(tg);
+			});
+		}
 		parts.forEach((pg) => {
 			const m = new T.Mesh(pg, strapMat);
 			m.castShadow = true;
