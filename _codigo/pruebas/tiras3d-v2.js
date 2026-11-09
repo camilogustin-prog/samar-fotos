@@ -107,6 +107,41 @@ export function strapLegsV(poly, medialRight, holes, o = {}) {
 	return { post, legs: [leg(holes.med, o.bowMed ?? 0.05), leg(holes.lat, o.bowLat ?? 0.09)] };
 }
 
+// Recorrido medido en las fotos de producto (vista desde arriba, tira de pie):
+// del nudo (detrás del hueco del dedo) sale en diagonal hasta casi el borde, baja pegada al borde
+// y al final se recoge hacia adentro para entrar en el hueco. Fracciones medidas desde el borde.
+export function strapLegsKite(poly, medialRight, holes, o = {}) {
+	let y0 = Infinity;
+	let y1 = -Infinity;
+	for (const q of poly) {
+		if (q[1] < y0) y0 = q[1];
+		if (q[1] > y1) y1 = q[1];
+	}
+	const H = y1 - y0;
+	const at = (f, fromMedial) => {
+		const y = y0 + f * H;
+		const [l, r] = edgesAt(poly, y);
+		const w = r - l;
+		return [medialRight ? r - fromMedial * w : l + fromMedial * w, y];
+	};
+	const post = holes.toe.slice();
+	const apexF = (post[1] - y0) / H + (o.apexBack ?? 0.07);
+	const apex = at(apexF, o.apexIn ?? 0.43);
+	const FS = [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7];
+	const MED = o.med || [0.3, 0.21, 0.11, 0.06, 0.05, 0.045, 0.045, 0.07, 0.13];
+	const LAT = o.lat || [0.38, 0.28, 0.17, 0.075, 0.055, 0.045, 0.045, 0.075, 0.14];
+	const leg = (IN, end) => {
+		const out = [apex.slice()];
+		const endF = (end[1] - y0) / H;
+		FS.forEach((f, k) => {
+			if (f > apexF + 0.02 && f < endF - 0.012) out.push(at(f, IN[k]));
+		});
+		out.push(end.slice());
+		return out;
+	};
+	return { post, apex, legs: [leg(MED, holes.med), leg(LAT.map((v) => 1 - v), holes.lat)] };
+}
+
 const smooth = (a, b, x) => {
 	const k = Math.min(1, Math.max(0, (x - a) / (b - a)));
 	return k * k * (3 - 2 * k);
@@ -147,7 +182,7 @@ export function strapGeo(p, opt = {}) {
 		if (W.x * out < 0) W.negate();
 		const Nn = new T.Vector3().crossVectors(W, Tn).normalize();
 		if (Nn.y < 0) Nn.negate();
-		const a = (opt.a0 ?? 0.1) + (opt.a1 ?? 1.25) * smooth(opt.ta ?? 0.1, opt.tb ?? 0.94, u);
+		const a = opt.stand ? 0.12 + 1.3 * smooth(0.12, 0.42, u) - (opt.endTilt ?? 0.55) * smooth(0.8, 0.98, u) : (opt.a0 ?? 0.1) + (opt.a1 ?? 1.25) * smooth(opt.ta ?? 0.1, opt.tb ?? 0.94, u);
 		const W2 = W.clone().multiplyScalar(Math.cos(a)).addScaledVector(Nn, -Math.sin(a)).normalize();
 		const D = new T.Vector3().crossVectors(W2, Tn).normalize();
 		if (D.dot(Nn) < 0) D.negate();
@@ -221,6 +256,19 @@ export function postGeos(post, o = {}) {
 	knob.scale(1, 0.9, 1);
 	knob.translate(post[0], SOLE_TOP + 52, post[1] - 9);
 	return [pg, head, knob];
+}
+
+// Poste del dedo como en la foto: sale del nudo hacia adelante y baja al hueco
+export function postStub(post, apex, o = {}) {
+	const top = new T.Vector3(apex[0], SOLE_TOP + (o.apexH ?? 66), apex[1]);
+	const bot = new T.Vector3(post[0], SOLE_TOP - 10, post[1]);
+	const mid = new T.Vector3(post[0] + (apex[0] - post[0]) * 0.35, SOLE_TOP + (o.apexH ?? 66) * 0.55, post[1] + (apex[1] - post[1]) * 0.3);
+	const curve = new T.CatmullRomCurve3([top, mid, bot], false, 'centripetal');
+	const tube = new T.TubeGeometry(curve, 24, o.r ?? 8.5, 20, false);
+	const head = new T.SphereGeometry(o.headR ?? 17, 40, 24);
+	head.scale(1.25, 0.55, 1.05);
+	head.translate(top.x, top.y - 2, top.z + 2);
+	return [tube, head];
 }
 
 function flakeTextures() {
@@ -386,8 +434,8 @@ export async function montar(host, o = {}) {
 	// Recorridos de la tira (para pintar la sombra de contacto y armar la malla)
 	const soles = [SOLE_L, SOLE_R].map((s, i) => {
 		const poly = pts(s);
-		const sl = o.path === 'v' ? strapLegsV(poly, i === 0, HOLES[i], o.pathOpt || {}) : strapLegs(poly, i === 0, HOLES[i]);
-		return { s, poly, post: sl.post, legs: sl.legs.map((leg) => insideSole(leg, poly, o.inset ?? 22)) };
+		const sl = o.path === 'kite' ? strapLegsKite(poly, i === 0, HOLES[i], o.pathOpt || {}) : o.path === 'v' ? strapLegsV(poly, i === 0, HOLES[i], o.pathOpt || {}) : strapLegs(poly, i === 0, HOLES[i]);
+		return { s, poly, post: sl.post, apex: sl.apex, legs: sl.legs.map((leg) => insideSole(leg, poly, o.inset ?? 22)) };
 	});
 
 	const tc = document.createElement('canvas');
@@ -432,7 +480,7 @@ export async function montar(host, o = {}) {
 				blurStroke(leg.slice(-3), 26, 9, 0.38 * aoA);
 				blurStroke(leg.slice(0, 2), 30, 10, 0.3 * aoA);
 			});
-			blurStroke([S.post, [S.post[0] + 0.1, S.post[1] + 0.1]], 34, 9, 0.45 * aoA);
+			blurStroke([S.post, S.apex || [S.post[0] + 0.1, S.post[1] + 0.1]], 26, 9, 0.4 * aoA);
 		});
 	}
 	if (o.slots !== false) {
@@ -499,7 +547,7 @@ export async function montar(host, o = {}) {
 		const sole = new T.Mesh(geo, [capMat, sideMat]);
 		sole.receiveShadow = true;
 		g.add(sole);
-		const parts = [...postGeos(S.post, o.post || {}), ...S.legs.map((leg) => strapGeo(leg, o.geo || {}))];
+		const parts = [...(S.apex ? postStub(S.post, S.apex, o.post || {}) : postGeos(S.post, o.post || {})), ...S.legs.map((leg) => strapGeo(leg, o.geo || {}))];
 		parts.forEach((pg) => {
 			const m = new T.Mesh(pg, strapMat);
 			m.castShadow = true;
