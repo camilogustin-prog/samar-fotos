@@ -432,9 +432,15 @@ export async function montar(host, o = {}) {
 	scene.add(px);
 
 	// Recorridos de la tira (para pintar la sombra de contacto y armar la malla)
+	const sh = o.holeShift || 0;
+	const holesOf = (h) => {
+		const dir = Math.sign(h.med[0] - h.lat[0]);
+		return { toe: h.toe, med: [h.med[0] - dir * sh, h.med[1] - (o.holeUp || 0)], lat: [h.lat[0] + dir * sh, h.lat[1] - (o.holeUp || 0)] };
+	};
+	const HS = HOLES.map(holesOf);
 	const soles = [SOLE_L, SOLE_R].map((s, i) => {
 		const poly = pts(s);
-		const sl = o.path === 'kite' ? strapLegsKite(poly, i === 0, HOLES[i], o.pathOpt || {}) : o.path === 'v' ? strapLegsV(poly, i === 0, HOLES[i], o.pathOpt || {}) : strapLegs(poly, i === 0, HOLES[i]);
+		const sl = o.path === 'kite' ? strapLegsKite(poly, i === 0, HS[i], o.pathOpt || {}) : o.path === 'v' ? strapLegsV(poly, i === 0, HOLES[i], o.pathOpt || {}) : strapLegs(poly, i === 0, HOLES[i]);
 		return { s, poly, post: sl.post, apex: sl.apex, legs: sl.legs.map((leg) => insideSole(leg, poly, o.inset ?? 22)) };
 	});
 
@@ -484,7 +490,7 @@ export async function montar(host, o = {}) {
 		});
 	}
 	if (o.slots !== false) {
-		HOLES.forEach((h) =>
+		HS.forEach((h) =>
 			[h.med, h.lat].forEach((q) => {
 				const r0 = o.holeR ?? 11;
 				const g = tctx.createRadialGradient(q[0], q[1] + 3, 0, q[0], q[1] + 3, r0 * 1.5);
