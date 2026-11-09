@@ -77,6 +77,36 @@ function strapLegs(poly, medialRight, holes) {
 	return { post, legs: [leg(true, holes.med), leg(false, holes.lat)] };
 }
 
+
+// Recorrido como en las fotos de producto: la tira cae casi recta del dedo a cada hueco (una V suave)
+export function strapLegsV(poly, medialRight, holes, o = {}) {
+	const post = holes.toe.slice();
+	const leg = (end, bow) => {
+		const dx = end[0] - post[0];
+		const dy = end[1] - post[1];
+		const L = Math.hypot(dx, dy);
+		let nx = -dy / L;
+		let ny = dx / L;
+		// normal hacia afuera del pie (lejos de la línea entre los dos huecos)
+		const mid = [(holes.med[0] + holes.lat[0]) / 2, (holes.med[1] + holes.lat[1]) / 2];
+		const c = [(post[0] + end[0]) / 2, (post[1] + end[1]) / 2];
+		if ((c[0] - mid[0]) * nx + (c[1] - mid[1]) * ny < 0) {
+			nx = -nx;
+			ny = -ny;
+		}
+		const out = [];
+		const n = 10;
+		for (let k = 0; k <= n; k++) {
+			const t = k / n;
+			const b = bow * L * Math.pow(Math.sin(Math.PI * Math.min(1, t * 1.05)), 0.9);
+			out.push([post[0] + dx * t + nx * b, post[1] + dy * t + ny * b]);
+		}
+		out[n] = end.slice();
+		return out;
+	};
+	return { post, legs: [leg(holes.med, o.bowMed ?? 0.05), leg(holes.lat, o.bowLat ?? 0.09)] };
+}
+
 const smooth = (a, b, x) => {
 	const k = Math.min(1, Math.max(0, (x - a) / (b - a)));
 	return k * k * (3 - 2 * k);
@@ -92,7 +122,7 @@ export function strapGeo(p, opt = {}) {
 	const rise = opt.rise ?? 40;
 	const P = p.map((q, i) => {
 		const t = len[i] / tot;
-		return new T.Vector3(q[0], SOLE_TOP + (1 - Math.pow(t, 5)) * (50 + rise * Math.sin(Math.PI * t * 0.85)), q[1]);
+		return new T.Vector3(q[0], SOLE_TOP + (1 - Math.pow(t, opt.fall ?? 5)) * ((opt.base ?? 50) + rise * Math.sin(Math.PI * t * (opt.peak ?? 0.85))), q[1]);
 	});
 	const e = p[p.length - 1];
 	P.push(new T.Vector3(e[0], SOLE_TOP - 16, e[1] + 4));
@@ -117,7 +147,7 @@ export function strapGeo(p, opt = {}) {
 		if (W.x * out < 0) W.negate();
 		const Nn = new T.Vector3().crossVectors(W, Tn).normalize();
 		if (Nn.y < 0) Nn.negate();
-		const a = (opt.a0 ?? 0.1) + (opt.a1 ?? 1.25) * smooth(0.1, 0.94, u);
+		const a = (opt.a0 ?? 0.1) + (opt.a1 ?? 1.25) * smooth(opt.ta ?? 0.1, opt.tb ?? 0.94, u);
 		const W2 = W.clone().multiplyScalar(Math.cos(a)).addScaledVector(Nn, -Math.sin(a)).normalize();
 		const D = new T.Vector3().crossVectors(W2, Tn).normalize();
 		if (D.dot(Nn) < 0) D.negate();
@@ -354,8 +384,8 @@ export async function montar(host, o = {}) {
 	// Recorridos de la tira (para pintar la sombra de contacto y armar la malla)
 	const soles = [SOLE_L, SOLE_R].map((s, i) => {
 		const poly = pts(s);
-		const sl = strapLegs(poly, i === 0, HOLES[i]);
-		return { s, poly, post: sl.post, legs: sl.legs.map((leg) => insideSole(leg, poly, 22)) };
+		const sl = o.path === 'v' ? strapLegsV(poly, i === 0, HOLES[i], o.pathOpt || {}) : strapLegs(poly, i === 0, HOLES[i]);
+		return { s, poly, post: sl.post, legs: sl.legs.map((leg) => insideSole(leg, poly, o.inset ?? 22)) };
 	});
 
 	const tc = document.createElement('canvas');
@@ -482,9 +512,9 @@ export async function montar(host, o = {}) {
 	sx.scale(0.5, 0.5);
 	sx.translate(100, 100);
 	sx.shadowColor = 'rgba(28,18,40,0.6)';
-	sx.shadowBlur = 26;
-	sx.shadowOffsetX = 1500;
-	sx.shadowOffsetY = 4;
+	sx.shadowBlur = o.gBlur ?? 26;
+	sx.shadowOffsetX = 1500 + (o.gOff ? o.gOff[0] : 0) / 2;
+	sx.shadowOffsetY = 4 + (o.gOff ? o.gOff[1] : 0) / 2;
 	sx.fillStyle = '#000';
 	[SOLE_L, SOLE_R].forEach((s) => {
 		sx.beginPath();
@@ -492,7 +522,7 @@ export async function montar(host, o = {}) {
 		sx.closePath();
 		sx.fill();
 	});
-	const shadow = new T.Mesh(new T.PlaneGeometry(1140, 1190), new T.MeshBasicMaterial({ map: new T.CanvasTexture(sc), transparent: true, depthWrite: false, opacity: 0.85 }));
+	const shadow = new T.Mesh(new T.PlaneGeometry(1140, 1190), new T.MeshBasicMaterial({ map: new T.CanvasTexture(sc), transparent: true, depthWrite: false, opacity: o.gOp ?? 0.85 }));
 	shadow.rotation.x = -Math.PI / 2;
 	shadow.position.set(470, 0.5, 495);
 	px.add(shadow);
