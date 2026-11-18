@@ -951,6 +951,130 @@ export const EN: Record<string, string> = {
 	Listo: 'Done',
 	Opcional: 'Optional',
 	opcional: 'optional',
+
+	// ---- Términos y condiciones ----
+	Contenido: 'Contents',
+	'Condiciones de compra': 'Purchase conditions',
+	'Vigente desde el': 'Effective as of',
+	'Quién te vende': 'Who sells to you',
+	'El producto': 'The product',
+	'Pedido mínimo y precios': 'Minimum order and prices',
+	'Cómo funciona tu pedido': 'How your order works',
+	'Tiempos de entrega': 'Delivery times',
+	'Derecho de retracto': 'Right of withdrawal',
+	Garantía: 'Warranty',
+	'Lo que nos envías para tu diseño': 'What you send us for your design',
+	'Peticiones, quejas y reclamos': 'Requests, complaints and claims',
+	'Ley aplicable': 'Governing law',
+	', con domicilio en': ', domiciled in',
+	'fabrica la sandalia base y personaliza cada par para tu evento.': 'makes the base sandal and personalizes each pair for your event.',
+	'Correo:': 'Email:',
+	'Dirección:': 'Address:',
+	'Horario de atención:': 'Business hours:',
+	'Sandalias de PVC personalizadas para eventos, en tallas 35 a 40. Eliges el color de la suela, de la tira y de la tinta del catálogo, y el arte: uno de nuestros estilos o un arte a medida que nuestro equipo diseña desde cero sin costo extra.':
+		'Personalized PVC sandals for events, in sizes 35 to 40 (US 5.5 to 10.5). You choose the sole, strap and ink colors from the catalog, and the artwork: one of our styles or custom artwork that our team designs from scratch at no extra cost.',
+	'La vista en 3D y las simulaciones son una guía. Los colores pueden variar un poco según tu pantalla, y el arte final lo ajustamos para que se imprima bien sobre la sandalia.':
+		'The 3D view and previews are a guide. Colors may vary slightly depending on your screen, and we adjust the final artwork so it prints well on the sandal.',
+	'El pedido mínimo es de': 'The minimum order is',
+	'pares. El precio por par baja según la cantidad total del pedido: lo ves en el diseñador, junto con el total a pagar, antes de confirmar. Si necesitas envío, te informamos su costo antes de pagar.':
+		'pairs. The price per pair goes down with the total quantity of the order: you see it in the designer, along with the total to pay, before confirming. If you need shipping, we tell you its cost before you pay.',
+	'Diseñas en la web y haces tu pedido desde tu cuenta.': 'You design on the website and place your order from your account.',
+	'Pagas el anticipo del': 'You pay the',
+	'% con Wompi en el paso Pago (tarjeta, PSE, Nequi, Daviplata o Bancolombia). Cuando el pago queda aprobado, empieza tu pedido.':
+		'% deposit with Wompi in the Payment step (card, PSE, Nequi, Daviplata or Bancolombia). Once the payment is approved, your order begins.',
+	'días te enviamos el diseño. Lo revisas en Mi cuenta y lo apruebas o nos pides ajustes:': 'days we send you the design. You review it in My account and approve it or ask us for revisions:',
+	'ajustes no tienen costo; desde el tercero tienen un costo adicional que te informamos antes de hacerlo.':
+		'revisions are free; from the third one on there is an additional cost that we tell you about beforehand.',
+	'Con el diseño aprobado producimos tus sandalias. Después de aprobado, el diseño ya no se puede cambiar.': 'With the design approved, we produce your sandals. Once approved, the design can no longer be changed.',
+	'Pagas el saldo contra entrega y recibes tus sandalias.': 'You pay the balance on delivery and receive your sandals.',
+	'Necesitamos cerca de': 'We need about',
+	'días para hacer tu pedido: tus sandalias están listas unos': 'days to make your order: your sandals are ready about',
+	'días después de que confirmamos tu pago, si apruebas el diseño a tiempo. Si tu evento es en menos de':
+		'days after we confirm your payment, if you approve the design on time. If your event is less than',
+	'días, escríbenos antes de pagar para confirmar que alcanzamos. Si algo puede retrasar la entrega, te avisamos de inmediato.':
+		"days away, message us before paying to confirm we can make it. If anything could delay delivery, we'll let you know right away.",
+	'Como cada pedido se fabrica según tus especificaciones (nombres, fechas, arte y colores), estos productos no tienen derecho de retracto, según el artículo 47 de la Ley 1480 de 2011.':
+		'Because each order is made to your specifications (names, dates, artwork and colors), these products are not subject to the right of withdrawal, under article 47 of Colombian Law 1480 of 2011.',
+	'Respondemos por la calidad de la sandalia y de la impresión en los términos del Estatuto del Consumidor. Si recibes pares con defectos de fabricación o de impresión, escríbenos con fotos y el código de tu pedido: los revisamos y, si aplica, los reparamos o los cambiamos. La garantía no cubre el desgaste normal por uso ni daños por mal uso.':
+		'We stand behind the quality of the sandal and the printing under the Colombian Consumer Statute. If you receive pairs with manufacturing or printing defects, message us with photos and your order code: we review them and, if applicable, repair or replace them. The warranty does not cover normal wear and tear or damage from misuse.',
+	'El anticipo se paga en línea con Wompi, una pasarela de pagos en línea: tarjeta débito o crédito, PSE, Nequi, Daviplata o Bancolombia. Samar no recibe ni guarda los datos de tu tarjeta ni de tu cuenta. El pedido empieza cuando Wompi aprueba el pago del anticipo. El saldo se paga contra entrega y lo coordinamos contigo. Cuando pagues por medios electrónicos aplican las reglas de reversión del pago del artículo 51 de la Ley 1480 de 2011.':
+		'The deposit is paid online with Wompi, an online payment gateway: debit or credit card, PSE, Nequi, Daviplata or Bancolombia. Samar does not receive or store your card or account details. The order begins when Wompi approves the deposit payment. The balance is paid on delivery and we coordinate it with you. When you pay electronically, the payment reversal rules of article 51 of Law 1480 of 2011 apply.',
+	'Al enviarnos logos, fotos o textos para tu diseño declaras que tienes derecho a usarlos. No reproducimos marcas ni personajes protegidos sin autorización de su titular.':
+		'By sending us logos, photos or text for your design, you state that you have the right to use them. We do not reproduce protected brands or characters without authorization from their owner.',
+	'Escríbenos por cualquiera de estos canales. Respondemos en máximo 15 días hábiles.': 'Message us through any of these channels. We respond within 15 business days at most.',
+	'Tratamos tus datos según nuestra': 'We handle your data according to our',
+	'política de datos personales': 'personal data policy',
+	'Estos términos se rigen por las leyes de Colombia, en especial la Ley 1480 de 2011. Rigen desde el':
+		'These terms are governed by the laws of Colombia, in particular Law 1480 of 2011. They are effective as of',
+	'y aplican a los pedidos hechos a partir de esa fecha.': 'and apply to orders placed from that date on.',
+
+	// ---- Política de datos ----
+	'Quién es el responsable de tus datos': 'Who is responsible for your data',
+	'Qué datos recogemos': 'What data we collect',
+	'Para qué usamos tus datos': 'What we use your data for',
+	'Cómo los tratamos y con quién los compartimos': 'How we handle it and who we share it with',
+	'Tus derechos': 'Your rights',
+	'Cómo ejercer tus derechos': 'How to exercise your rights',
+	'Cookies y almacenamiento del navegador': 'Cookies and browser storage',
+	'Seguridad y conservación': 'Security and retention',
+	'Vigencia y cambios': 'Effective date and changes',
+	'es la responsable del tratamiento de los datos personales que recogemos en samarpadridin.com y en nuestros canales de atención.':
+		'is the controller of the personal data we collect on samarpadridin.com and through our customer service channels.',
+	'Datos de tu cuenta: nombre, correo, número de WhatsApp, ciudad y contraseña (guardada cifrada; nadie de nuestro equipo puede verla).':
+		'Your account data: name, email, WhatsApp number, city and password (stored encrypted; no one on our team can see it).',
+	'Datos de tus diseños y pedidos: tipo y fecha del evento, nombres, iniciales y frases que se imprimen, colores, tallas, cantidades, valores y estado del pedido.':
+		'Your design and order data: event type and date, names, initials and phrases to be printed, colors, sizes, quantities, amounts and order status.',
+	'Lo que sueñas para tu fiesta en el diseñador (lugar, estilo y canción) cuando decides contárnoslo.':
+		'What you dream up for your party in the designer (venue, style and song) when you choose to tell us.',
+	'Las ideas y fotos de referencia que subes para el arte a medida.': 'The ideas and reference photos you upload for custom artwork.',
+	'Los mensajes que nos envías por WhatsApp o correo.': 'The messages you send us on WhatsApp or by email.',
+	'No te pedimos datos sensibles. Si una foto de referencia muestra a otras personas, súbela solo si cuentas con su autorización. Cuando el diseño lleva el nombre de una persona menor de edad, quien hace el pedido declara ser su representante o tener su autorización. Las cuentas deben crearlas personas mayores de edad.':
+		"We do not ask for sensitive data. If a reference photo shows other people, upload it only if you have their permission. When the design carries the name of a minor, the person placing the order states that they are the minor's representative or have their authorization. Accounts must be created by adults.",
+	'Crear y administrar tu cuenta, guardar tus diseños y mostrarte el estado de tus pedidos.': 'Create and manage your account, save your designs and show you the status of your orders.',
+	'Diseñar, producir, empacar y entregar tus sandalias, incluido el arte a medida.': 'Design, produce, pack and deliver your sandals, including custom artwork.',
+	'Comunicarnos contigo sobre tu pedido por WhatsApp, correo o teléfono: anticipo, arte para aprobar, producción y entrega.':
+		'Contact you about your order by WhatsApp, email or phone: deposit, artwork to approve, production and delivery.',
+	'Gestionar pagos, facturación y obligaciones contables y tributarias.': 'Manage payments, invoicing, and accounting and tax obligations.',
+	'Atender tus peticiones, quejas, reclamos y solicitudes de garantía.': 'Handle your requests, complaints, claims and warranty requests.',
+	'Mejorar la tienda y el servicio con estadísticas generales que no te identifican.': 'Improve the store and the service with general statistics that do not identify you.',
+	'Enviarte novedades o promociones solo si nos das una autorización aparte. Puedes retirarla cuando quieras y nunca es requisito para comprar.':
+		'Send you news or promotions only if you give us separate authorization. You can withdraw it anytime, and it is never required to buy.',
+	'Guardamos tus datos en la plataforma de la tienda y en los archivos de producción de': 'We store your data on the store platform and in the production files of',
+	', con acceso limitado a las personas de nuestro equipo que los necesitan para atender tu pedido. Solo los compartimos con:':
+		', with access limited to the people on our team who need it to handle your order. We only share it with:',
+	'Proveedores tecnológicos que alojan la tienda, la base de datos y nuestros archivos, que pueden estar fuera de Colombia y actúan por cuenta nuestra.':
+		'Technology providers that host the store, the database and our files, which may be outside Colombia and act on our behalf.',
+	'WhatsApp y servicios de correo, cuando nos comunicamos contigo por esos medios.': 'WhatsApp and email services, when we contact you through those channels.',
+	'Entidades de pago como Wompi y empresas de transporte, solo con lo necesario para cobrar o entregar tu pedido.':
+		'Payment providers such as Wompi and shipping companies, only with what is needed to charge for or deliver your order.',
+	'Autoridades que lo soliciten conforme a la ley.': 'Authorities that request it in accordance with the law.',
+	'No vendemos ni alquilamos tus datos.': 'We do not sell or rent your data.',
+	'Como titular de tus datos puedes:': 'As the owner of your data you can:',
+	'Conocer, actualizar y corregir tus datos. Muchos los puedes cambiar tú mismo en Mi cuenta.': 'Access, update and correct your data. You can change much of it yourself in My account.',
+	'Pedir prueba de la autorización que nos diste.': 'Request proof of the authorization you gave us.',
+	'Saber qué uso le hemos dado a tus datos.': 'Find out how we have used your data.',
+	'Revocar tu autorización o pedir que borremos tus datos, cuando no tengamos un deber legal o contractual de conservarlos.':
+		'Revoke your authorization or ask us to delete your data, when we have no legal or contractual duty to keep it.',
+	'Acceder gratis a tus datos.': 'Access your data free of charge.',
+	'Presentar quejas ante la Superintendencia de Industria y Comercio, después de haber hecho tu consulta o reclamo con nosotros.':
+		"File complaints with Colombia's Superintendence of Industry and Commerce, after first submitting your inquiry or claim to us.",
+	'Escríbenos al correo o al WhatsApp de atención con tu nombre, el correo de tu cuenta, lo que necesitas y, si es un reclamo, los documentos que quieras aportar. Atiende estas solicitudes el equipo de servicio al cliente de Samar.':
+		"Write to our customer service email or WhatsApp with your name, your account email, what you need and, if it is a claim, any documents you want to provide. These requests are handled by Samar's customer service team.",
+	Consultas: 'Inquiries',
+	'(saber qué datos tenemos o cómo los usamos): respondemos en máximo 10 días hábiles. Si necesitamos más tiempo te avisamos y respondemos dentro de los 5 días hábiles siguientes.':
+		'(finding out what data we have or how we use it): we respond within 10 business days at most. If we need more time, we let you know and respond within the following 5 business days.',
+	Reclamos: 'Claims',
+	'(corregir, actualizar, borrar o revocar la autorización): respondemos en máximo 15 días hábiles. Si necesitamos más tiempo te avisamos y respondemos dentro de los 8 días hábiles siguientes. Si al reclamo le falta información, te la pedimos en los 5 días siguientes; si no la recibimos en 2 meses, entendemos que desististe.':
+		"(correcting, updating, deleting or revoking authorization): we respond within 15 business days at most. If we need more time, we let you know and respond within the following 8 business days. If the claim is missing information, we ask you for it within the following 5 days; if we don't receive it within 2 months, we understand that you have withdrawn it.",
+	'La tienda guarda en tu navegador tu sesión, el borrador de tu diseño y tu preferencia de música, para que no pierdas lo que estás haciendo. No usamos cookies de publicidad. Nuestro proveedor de alojamiento puede medir las visitas de forma agregada para estadísticas del sitio. Puedes borrar estos datos desde la configuración de tu navegador.':
+		"The store saves your session, your design draft and your music preference in your browser so you don't lose what you're working on. We do not use advertising cookies. Our hosting provider may measure visits in aggregate for site statistics. You can delete this data from your browser settings.",
+	'Protegemos tus datos con acceso restringido, contraseñas cifradas y conexiones seguras. Los conservamos mientras tu cuenta esté activa y durante el tiempo necesario para cumplir obligaciones legales, contables, tributarias y de garantía. Las fotos de referencia del arte a medida se conservan solo mientras se diseña, produce y garantiza tu pedido.':
+		'We protect your data with restricted access, encrypted passwords and secure connections. We keep it while your account is active and for as long as needed to meet legal, accounting, tax and warranty obligations. Reference photos for custom artwork are kept only while your order is designed, produced and under warranty.',
+	'Esta política rige desde el': 'This policy is effective as of',
+	'(versión': '(version',
+	'). Las bases de datos se mantienen mientras': '). The databases are kept for as long as',
+	'desarrolle su actividad. Si cambiamos algo importante, como el responsable o la finalidad del tratamiento, lo publicaremos aquí y te lo informaremos antes de aplicarlo. Esta política sigue la Ley 1581 de 2012 y el Decreto 1074 de 2015.':
+		'carries on its business. If we change anything important, such as the controller or the purpose of processing, we will publish it here and inform you before applying it. This policy follows Colombian Law 1581 of 2012 and Decree 1074 of 2015.',
 };
 
 // ---- Textos que se arman con números, nombres o fechas ----
@@ -1009,7 +1133,22 @@ const pares = (n: string) => (n === '1' ? 'pair' : 'pairs');
 const dias = (n: string) => (n === '1' ? 'day' : 'days');
 
 export const EN_PATRONES: Patron[] = [
+	[/^(.+) \| Samar Padridin$/, (m, t) => t(m[1]) + ' | Samar Padridin'],
 	[/^Pregunta (\d+) de (\d+)$/, (m) => 'Question ' + m[1] + ' of ' + m[2]],
+	[
+		/^Desde (\d+) pares\. El precio por par baja según la cantidad total de tu pedido\.$/,
+		(m) => 'From ' + m[1] + ' pairs. The price per pair goes down as your order quantity goes up.',
+	],
+	[
+		/^Sí\. En (\d+) días te enviamos el arte final para que lo revises en Mi cuenta\. Puedes pedir (\d+) ajustes sin costo; desde el tercero tiene un costo adicional\. Ningún pedido pasa a producción sin tu aprobación\.$/,
+		(m) =>
+			'Yes. Within ' + m[1] + ' days we send you the final artwork to review in My account. You can request ' + m[2] + ' free revisions; from the third one on there is an additional cost. No order goes into production without your approval.',
+	],
+	[
+		/^Cerca de (\d+) días en total\. Desde que confirmamos tu anticipo, tus sandalias están listas en unos (\d+) días\. Si tu evento es en menos de (\d+) días, escríbenos antes de pagar y te decimos si alcanzamos\.$/,
+		(m) =>
+			'About ' + m[1] + ' days in total. Once we confirm your deposit, your sandals are ready in about ' + m[2] + ' days. If your event is less than ' + m[3] + " days away, message us before paying and we'll tell you if we can make it.",
+	],
 	[/^Paso (\d+) de (\d+)$/, (m) => 'Step ' + m[1] + ' of ' + m[2]],
 	[/^Hola, ([^\s,.!]+)$/, (m) => 'Hi, ' + m[1]],
 	[/^\(quedan (\d+) h\)$/, (m) => '(' + m[1] + ' h left)'],

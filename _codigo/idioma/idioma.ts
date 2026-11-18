@@ -57,8 +57,9 @@ let actual: Idioma = 'es';
 let iniciado = false;
 const avisos = new Set<(l: Idioma) => void>();
 
-// Lo que nunca se traduce
+// Lo que nunca se traduce (de los campos de texto solo se traduce el texto de ayuda, no lo que escribe la persona)
 const EXCLUIR = 'script,style,noscript,textarea,code,pre,[translate="no"],[data-no-traducir],[contenteditable="true"]';
+const EXCLUIR_ATR = 'script,style,noscript,code,pre,[translate="no"],[data-no-traducir],[contenteditable="true"]';
 const ATRIBUTOS = ['placeholder', 'title', 'aria-label', 'alt'];
 
 // Texto original (en español) y texto puesto por nosotros, por nodo
@@ -138,6 +139,10 @@ function excluidoArriba(n: Node): boolean {
 	return !el || !!el.closest(EXCLUIR);
 }
 
+function atrExcluido(el: Element): boolean {
+	return !!el.closest(EXCLUIR_ATR);
+}
+
 function podar() {
 	if (cambiadosTxt.size > 4000) cambiadosTxt = new Set([...cambiadosTxt].filter((t) => t.isConnected));
 	if (cambiadosAtr.size > 4000) cambiadosAtr = new Set([...cambiadosAtr].filter((e) => e.isConnected));
@@ -206,10 +211,14 @@ function recorrer(raiz: Node) {
 	}
 	if (raiz.nodeType !== 1) return;
 	const el = raiz as Element;
+	if (!atrExcluido(el)) atributos(el);
 	if (excluidoArriba(el)) return;
-	atributos(el);
 	const tw = document.createTreeWalker(el, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
-		acceptNode: (n) => (n.nodeType === 1 && (n as Element).matches(EXCLUIR) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT),
+		acceptNode: (n) => {
+			if (n.nodeType !== 1 || !(n as Element).matches(EXCLUIR)) return NodeFilter.FILTER_ACCEPT;
+			if (!(n as Element).matches(EXCLUIR_ATR)) atributos(n as Element); // textarea: su texto de ayuda sí
+			return NodeFilter.FILTER_REJECT;
+		},
 	});
 	for (let n = tw.nextNode(); n; n = tw.nextNode()) {
 		if (n.nodeType === 3) textoNodo(n as Text);
@@ -223,7 +232,7 @@ function alCambiar(regs: MutationRecord[]) {
 		if (r.type === 'characterData') {
 			if (!excluidoArriba(r.target)) textoNodo(r.target as Text);
 		} else if (r.type === 'attributes') {
-			if (!excluidoArriba(r.target)) atributos(r.target as Element);
+			if (!atrExcluido(r.target as Element)) atributos(r.target as Element);
 		} else {
 			r.addedNodes.forEach((n) => recorrer(n));
 		}
