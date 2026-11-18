@@ -51,6 +51,9 @@ export const CSS_IDIOMA = [
 	'.sm-lang-m{margin-left:2px}',
 	'.sm-lang-d{display:none !important;margin-right:12px}',
 	'@media(min-width:1060px){.sm-lang-m{display:none !important}.sm-lang-d{display:inline-flex !important}}',
+	// En celular, más compacto para no tocar el logo; en pantallas muy angostas solo se ve el otro idioma
+	'@media(max-width:1059px){.sm-lang-m{font-size:12px;gap:0}.sm-lang-m button{padding:6px 3px 4px}}',
+	'@media(max-width:350px){.sm-lang-m span,.sm-lang-m button[aria-pressed="true"]{display:none}}',
 ].join('');
 
 let actual: Idioma = 'es';

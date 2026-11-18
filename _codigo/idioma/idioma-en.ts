@@ -738,6 +738,13 @@ export const EN: Record<string, string> = {
 	Música: 'Music',
 	'Activar música': 'Turn on music',
 	'qué celebras': "what you're celebrating",
+	'La que pone a todos a bailar': 'The one that gets everyone dancing',
+	'tu boda': 'your wedding',
+	'tus XV años': 'your quinceañera',
+	'tu cumpleaños': 'your birthday',
+	'tu grado': 'your graduation',
+	'tu baby shower': 'your baby shower',
+	'tu celebración': 'your celebration',
 	'el lugar': 'the venue',
 	'cómo la sueñas': 'how you dream it',
 
@@ -1134,6 +1141,7 @@ const dias = (n: string) => (n === '1' ? 'day' : 'days');
 
 export const EN_PATRONES: Patron[] = [
 	[/^(.+) \| Samar Padridin$/, (m, t) => t(m[1]) + ' | Samar Padridin'],
+	[/^(la boda de|los XV años de|el cumpleaños de|el grado de|el baby shower de|la celebración de) (.+)$/, (m) => quien(m[0])],
 	[/^Pregunta (\d+) de (\d+)$/, (m) => 'Question ' + m[1] + ' of ' + m[2]],
 	[
 		/^Desde (\d+) pares\. El precio por par baja según la cantidad total de tu pedido\.$/,
