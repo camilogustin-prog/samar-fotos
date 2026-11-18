@@ -8,7 +8,7 @@
  * siguen en español, así el equipo de Samar los recibe igual que siempre.
  *
  * Quién ve la página en inglés:
- * 1. Quien eligió idioma con el selector ES | EN (se recuerda en su navegador).
+ * 1. Quien eligió idioma con las banderas del encabezado (se recuerda en su navegador).
  * 2. Si no ha elegido: quien está en Estados Unidos (por su IP, con /api/samar/region, o por
  *    la zona horaria de su navegador) o tiene el navegador en inglés.
  *
@@ -39,21 +39,22 @@ export const SCRIPT_IDIOMA =
 	'.test(z)||n.indexOf("en")===0)?"en":"es"}if(l==="en"&&location.pathname.indexOf("/admin")!==0){d.setAttribute("data-idioma","en");d.lang="en";' +
 	'setTimeout(function(){d.setAttribute("data-idioma-listo","")},2500)}}catch(e){}})();';
 
-/** Estilos del selector ES | EN y de la espera mientras se traduce. */
+/** Estilos del selector de banderas y de la espera mientras se traduce. */
 export const CSS_IDIOMA = [
 	'html[data-idioma="en"]:not([data-idioma-listo]) body{opacity:0}',
-	'.sm-lang{display:inline-flex;align-items:center;gap:1px;font-size:13px;font-weight:700;letter-spacing:.06em;line-height:1;white-space:nowrap}',
-	'.sm-lang button{background:none;border:0;border-bottom:2px solid transparent;padding:7px 4px 5px;margin:0;font:inherit;color:inherit;cursor:pointer;opacity:.55}',
-	'.sm-lang button[aria-pressed="true"]{opacity:1;border-bottom-color:currentColor}',
+	'.sm-lang{display:inline-flex;align-items:center;gap:4px;line-height:0;white-space:nowrap}',
+	'.sm-lang button{background:none;border:0;padding:6px 4px;margin:0;cursor:pointer;opacity:.5;color:inherit;border-radius:4px;transition:opacity .15s ease}',
+	'.sm-lang button svg{display:block;width:24px;height:16px;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.18)}',
+	'.sm-lang button[aria-pressed="true"]{opacity:1}',
+	'.sm-lang button[aria-pressed="true"] svg{box-shadow:0 0 0 2px currentColor}',
 	'.sm-lang button:hover{opacity:1}',
-	'.sm-lang button:focus-visible{outline:2px solid currentColor;outline-offset:2px}',
-	'.sm-lang span{opacity:.35}',
+	'.sm-lang button:focus-visible{outline:2px solid currentColor;outline-offset:1px}',
 	'.sm-lang-m{margin-left:2px}',
 	'.sm-lang-d{display:none !important;margin-right:12px}',
 	'@media(min-width:1060px){.sm-lang-m{display:none !important}.sm-lang-d{display:inline-flex !important}}',
-	// En celular, más compacto para no tocar el logo; en pantallas muy angostas solo se ve el otro idioma
-	'@media(max-width:1059px){.sm-lang-m{font-size:12px;gap:0}.sm-lang-m button{padding:6px 3px 4px}}',
-	'@media(max-width:350px){.sm-lang-m span,.sm-lang-m button[aria-pressed="true"]{display:none}}',
+	// En celular, más compacto para no tocar el logo; en pantallas muy angostas solo se ve la otra bandera
+	'@media(max-width:1059px){.sm-lang-m{gap:2px}.sm-lang-m button{padding:6px 3px}.sm-lang-m button svg{width:21px;height:14px}}',
+	'@media(max-width:350px){.sm-lang-m button[aria-pressed="true"]{display:none}}',
 ].join('');
 
 let actual: Idioma = 'es';
