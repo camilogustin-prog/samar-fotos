@@ -53,7 +53,7 @@ export const CSS_IDIOMA = [
 	'.sm-lang-d{display:none !important;margin-right:12px}',
 	'@media(min-width:1060px){.sm-lang-m{display:none !important}.sm-lang-d{display:inline-flex !important}}',
 	// En celular, más compacto para no tocar el logo; en pantallas muy angostas solo se ve la otra bandera
-	'@media(max-width:1059px){.sm-lang-m{gap:2px}.sm-lang-m button{padding:6px 3px}.sm-lang-m button svg{width:21px;height:14px}}',
+	'@media(max-width:1059px){.sm-lang-m{gap:1px;margin-left:0}.sm-lang-m button{padding:6px 2px}.sm-lang-m button svg{width:20px;height:13px}}',
 	'@media(max-width:350px){.sm-lang-m button[aria-pressed="true"]{display:none}}',
 ].join('');
 
